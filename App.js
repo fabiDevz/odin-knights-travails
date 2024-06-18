@@ -17,6 +17,48 @@ function knightsMoves(inicio, destino) {
 
     tablero.printTablero();
 
+    const movimientoCaballo = [
+        { posX: 2, posY: 1 }, { posX: 1, posY: 2 },
+        { posX: -1, posY: 2 }, { posX: -2, posY: 1 },
+        { posX: -2, posY: -1 }, { posX: -1, posY: -2 },
+        { posX: 1, posY: -2 }, { posX: 2, posY: -1 }
+    ];
+
+    let movimientosPermitidos = [];
+
+       movimientoCaballo.forEach(moves => {
+       
+        let coordenada = {
+            x : moves.posX + inicio[0],
+            y : moves.posY + inicio[1]
+        };
+
+
+        if (coordenada.x >= 0 && coordenada.x < 8 && coordenada.y >= 0 && coordenada.y < 8) {
+            movimientosPermitidos.push(coordenada.x+','+coordenada.y);
+        }
+
+       });
+
+       movimientosPermitidos.forEach(moves => {
+        console.log('moves --> '+ moves);
+       });
+
+
+
 }
 
-knightsMoves([5, 3], [4,2]);
+function movimientoValido(movimiento)
+{
+    if (movimiento[0] < 0 || movimiento[1] < 0 || movimiento[0] > 7 || movimiento[1] > 7) {
+        console.log('Movimiento fuera del tablero  : '+movimiento);
+
+        return false;
+    };
+    console.log('Movimiento válido : '+movimiento);
+    return true;
+
+      
+}
+
+knightsMoves([6, 3], [4,2]);
