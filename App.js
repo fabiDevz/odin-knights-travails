@@ -1,22 +1,45 @@
-import Tablero from './Tablero.js';
+
 
 function knightsMoves(inicio, destino) {
-    let tablero = new Tablero();
+    let queue = [{ pos: inicio, dist: 0 }];
+    let visitados = new Set();
+    let padres = new Map(); // Para rastrear el camino
 
-    if (inicio[0] < 0 || inicio[1] < 0 || inicio[0] > 7 || inicio[1] > 7) {
-        console.log('Posición de inicio inválida');
+    padres.set(inicio.toString(), null);
 
-        return;
-    };
+    while (queue.length > 0) {
+        let actual = queue.shift();
+        let actualPos = actual.pos;
+        let actualDist = actual.dist;
 
-    if (destino[0] < 0 || destino[1] < 0 || destino[0] > 7 || destino[1] > 7) {
-        console.log('Posición de destino inválida');
+        if (actualPos[0] === destino[0] && actualPos[1] === destino[1]) {
 
-        return;
-    };
+            console.log('El camino se logro en '+actualDist+' movimientos:');
+            let arrayPath = reconstruirCamino(padres,destino);
+            arrayPath.forEach(moves => {
+                console.log('['+moves+']');
+            });
+            return 0;
+        }
 
-    tablero.printTablero();
+        visitados.add(actualPos.toString());
 
+        knightMove(actualPos).forEach(moves => {
+            if (!visitados.has(moves.toString())) {
+                queue.push({ pos: moves, dist: actualDist + 1 });
+                visitados.add(moves.toString());
+                padres.set(moves.toString(), actualPos); // Rastrear el padre
+            }
+        });
+    }
+
+    console.log('No se encontro un camino');
+    return -1; 
+}
+
+
+
+function knightMove(posicion) {
     const movimientoCaballo = [
         { posX: 2, posY: 1 }, { posX: 1, posY: 2 },
         { posX: -1, posY: 2 }, { posX: -2, posY: 1 },
@@ -26,39 +49,43 @@ function knightsMoves(inicio, destino) {
 
     let movimientosPermitidos = [];
 
-       movimientoCaballo.forEach(moves => {
-       
+    movimientoCaballo.forEach(moves => {
+
         let coordenada = {
-            x : moves.posX + inicio[0],
-            y : moves.posY + inicio[1]
+            x: moves.posX + posicion[0],
+            y: moves.posY + posicion[1]
         };
 
 
         if (coordenada.x >= 0 && coordenada.x < 8 && coordenada.y >= 0 && coordenada.y < 8) {
-            movimientosPermitidos.push(coordenada.x+','+coordenada.y);
+            movimientosPermitidos.push([coordenada.x,coordenada.y]);
         }
 
-       });
+    });
 
-       movimientosPermitidos.forEach(moves => {
-        console.log('moves --> '+ moves);
-       });
+    movimientosPermitidos.forEach(moves => {
+      //  console.log('moves --> ' + moves);
 
+    });
 
+    return movimientosPermitidos;
 
 }
 
-function movimientoValido(movimiento)
-{
-    if (movimiento[0] < 0 || movimiento[1] < 0 || movimiento[0] > 7 || movimiento[1] > 7) {
-        console.log('Movimiento fuera del tablero  : '+movimiento);
+function reconstruirCamino(padres, destino) {
+    let camino = [];
+    let paso = destino;
 
-        return false;
-    };
-    console.log('Movimiento válido : '+movimiento);
-    return true;
+    while (paso) {
+        camino.push(paso);
+        paso = padres.get(paso.toString());
+    }
 
-      
+    camino.reverse();
+    return camino;
 }
 
-knightsMoves([6, 3], [4,2]);
+
+
+
+knightsMoves([3, 3], [4, 3]);
